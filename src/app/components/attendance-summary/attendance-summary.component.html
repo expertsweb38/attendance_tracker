@@ -1,0 +1,40 @@
+<mat-card>
+  <mat-card-title>Summary</mat-card-title>
+  <mat-card-content>
+    <div class="grid">
+      <div class="item">
+        <div class="label">Total Present Days</div>
+        <div class="value">{{ summary().totalPresentDays }}</div>
+      </div>
+      <div class="item">
+        <div class="label">Total Absent Days (month)</div>
+        <div class="value">{{ summary().totalAbsentDaysMonth }}</div>
+      </div>
+      <div class="item">
+        <div class="label">Average Daily</div>
+        <div class="value">{{ (summary().averageDailyHours | number:'1.0-2') }} h</div>
+      </div>
+    </div>
+
+    <div class="subgrid">
+      <div class="block">
+        <div class="block-title">This Week</div>
+        <div>Worked: {{ format(summary().week.totalMs) }}</div>
+        <div>Target: {{ format(summary().week.targetMs) }}</div>
+        <div [class.good]="summary().week.aheadBehindMs >= 0" [class.bad]="summary().week.aheadBehindMs < 0">
+          {{ sign(summary().week.aheadBehindMs) }}: {{ format(abs(summary().week.aheadBehindMs)) }}
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title">This Month</div>
+        <div>Worked: {{ format(summary().month.totalMs) }}</div>
+        <div>Target: {{ format(summary().month.targetMs) }}</div>
+        <div [class.good]="summary().month.aheadBehindMs >= 0" [class.bad]="summary().month.aheadBehindMs < 0">
+          {{ sign(summary().month.aheadBehindMs) }}: {{ format(abs(summary().month.aheadBehindMs)) }}
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+
