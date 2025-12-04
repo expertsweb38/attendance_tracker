@@ -1,0 +1,116 @@
+<div class="today-container">
+  <div class="page-header">
+    <h1 class="page-title">
+      <mat-icon>today</mat-icon>
+      Today's Attendance
+    </h1>
+    <p class="page-subtitle">Track your work hours for today</p>
+  </div>
+
+  <div class="today-content">
+    <!-- Status Card -->
+    <mat-card class="status-card">
+      <mat-card-content>
+        <div class="status-header">
+          <div class="status-indicator" [class.checked-in]="status().checkedIn">
+            <mat-icon>{{ status().checkedIn ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
+            <span class="status-text">{{ status().checkedIn ? 'Checked In' : 'Not Checked In' }}</span>
+          </div>
+        </div>
+
+        <div class="time-info" *ngIf="status().checkInTime">
+          <div class="info-row">
+            <mat-icon>login</mat-icon>
+            <span class="info-label">Check-in Time:</span>
+            <span class="info-value">{{ status().checkInTime | date:'shortTime' }}</span>
+          </div>
+        </div>
+
+        <div class="worked-time">
+          <div class="time-display">
+            <div class="time-label">Time Worked</div>
+            <div class="time-value">{{ formatHMS(status().workedMs) }}</div>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-section">
+          <div class="progress-header">
+            <span>Daily Target: {{ getDailyHoursLimit() }} hour{{ getDailyHoursLimit() !== 1 ? 's' : '' }}</span>
+            <span class="progress-percentage">{{ getProgress() | number:'1.0-1' }}%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="getProgress()"></div>
+          </div>
+          <div class="progress-info">
+            <span *ngIf="status().aheadBehindMs >= 0" class="ahead">
+              <mat-icon>trending_up</mat-icon>
+              Today Ahead: {{ format(abs(status().aheadBehindMs)) }}
+            </span>
+            <span *ngIf="status().aheadBehindMs < 0" class="behind">
+              <mat-icon>trending_down</mat-icon>
+              Today Behind: {{ format(abs(status().aheadBehindMs)) }}
+            </span>
+            <span *ngIf="getRemainingMs() > 0 && status().aheadBehindMs < 0" class="remaining">
+              Remaining Today: {{ format(getRemainingMs()) }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Cumulative Status -->
+        <div class="cumulative-status-card" [class.ahead]="getCumulativeStatus().aheadBehindMs >= 0" [class.behind]="getCumulativeStatus().aheadBehindMs < 0">
+          <div class="cumulative-header">
+            <mat-icon>{{ getCumulativeStatus().aheadBehindMs >= 0 ? 'check_circle' : 'warning' }}</mat-icon>
+            <span class="cumulative-title">Cumulative Status (Month Till Now)</span>
+          </div>
+          <div class="cumulative-content">
+            <div class="cumulative-value">
+              <span class="cumulative-label">{{ getCumulativeStatus().aheadBehindMs >= 0 ? 'Ahead' : 'Behind' }}:</span>
+              <span class="cumulative-hours">{{ format(abs(getCumulativeStatus().aheadBehindMs)) }}</span>
+            </div>
+            <div class="cumulative-details">
+              Based on {{ getCumulativeStatus().workingDaysElapsed }} working day{{ getCumulativeStatus().workingDaysElapsed !== 1 ? 's' : '' }} elapsed
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Actions Card -->
+    <mat-card class="actions-card">
+      <mat-card-content>
+        <div class="actions-grid">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            class="action-btn"
+            (click)="checkIn()"
+            [disabled]="status().checkedIn">
+            <mat-icon>login</mat-icon>
+            <span>Check In</span>
+          </button>
+          
+          <button 
+            mat-raised-button 
+            color="accent" 
+            class="action-btn"
+            (click)="checkOut()"
+            [disabled]="!status().checkedIn">
+            <mat-icon>logout</mat-icon>
+            <span>Check Out</span>
+          </button>
+          
+          <button 
+            mat-stroked-button 
+            class="action-btn"
+            (click)="adjustCheckIn()"
+            [disabled]="!status().checkedIn">
+            <mat-icon>schedule</mat-icon>
+            <span>Adjust Time</span>
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+

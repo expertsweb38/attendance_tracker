@@ -10,11 +10,11 @@ export interface AttendanceRecord {
 }
 
 export interface PeriodSummary {
-  period: 'week' | 'month';
+  period: 'month';
   startDate: string; // YYYY-MM-DD
   endDate: string;   // YYYY-MM-DD
   totalMs: number;
-  targetMs: number; // 8h per elapsed day in period
+  targetMs: number; // 9h per working day in month
   aheadBehindMs: number; // totalMs - targetMs
 }
 

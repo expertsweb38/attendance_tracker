@@ -1,20 +1,311 @@
-.full-width {
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
   width: 100%;
 }
 
+.records-card,
+.report-card {
+  width: 100%;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  
+  mat-card-header {
+    background: linear-gradient(135deg, rgba(25, 118, 210, 0.06) 0%, rgba(25, 118, 210, 0.02) 100%);
+  }
+}
+
+.title-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  mat-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+    color: var(--mat-sys-primary);
+    background: linear-gradient(135deg, rgba(25, 118, 210, 0.1) 0%, rgba(25, 118, 210, 0.05) 100%);
+    padding: 8px;
+    border-radius: 12px;
+  }
+  
+  span {
+    font-size: 1.3rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--mat-sys-primary) 0%, #1976d2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+.report-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.month-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.month-picker {
+  width: 200px;
+  min-width: 180px;
+  
+  ::ng-deep .mat-mdc-form-field {
+    .mat-mdc-text-field-wrapper {
+      background: white;
+      border-radius: 12px;
+    }
+  }
+}
+
+.nav-button {
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(25, 118, 210, 0.1);
+    transform: scale(1.1);
+  }
+}
+
+.today-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, var(--mat-sys-primary) 0%, #1976d2 100%);
+  color: white;
+  border: none;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
+  }
+  
+  .button-text {
+    @media (max-width: 600px) {
+      display: none;
+    }
+  }
+}
+
+.month-label {
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, rgba(25, 118, 210, 0.08) 0%, rgba(25, 118, 210, 0.04) 100%);
+  border-radius: 12px;
+  font-size: 1rem;
+  color: var(--mat-sys-on-surface-variant);
+  border-left: 4px solid var(--mat-sys-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  &::before {
+    content: '📅';
+    font-size: 1.2rem;
+  }
+  
+  strong {
+    color: var(--mat-sys-primary);
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+}
+
+.full-width {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
 .empty {
-  padding: 16px;
+  padding: 48px 24px;
+  text-align: center;
   color: var(--mat-sys-outline);
+  font-size: 1rem;
+  
+  &::before {
+    content: '📋';
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
 }
 
 .weekend-dot {
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: red;
-  margin-right: 6px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  margin-right: 10px;
   vertical-align: middle;
+  box-shadow: 0 2px 4px rgba(238, 90, 111, 0.3);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+.status-present {
+  color: #2e7d32;
+  font-weight: 600;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, rgba(46, 125, 50, 0.1) 0%, rgba(46, 125, 50, 0.05) 100%);
+  border-radius: 6px;
+  display: inline-block;
+  
+  &::before {
+    content: '✓';
+    margin-right: 4px;
+    font-weight: bold;
+  }
+}
+
+.status-absent {
+  color: #d32f2f;
+  font-weight: 600;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, rgba(211, 47, 47, 0.1) 0%, rgba(211, 47, 47, 0.05) 100%);
+  border-radius: 6px;
+  display: inline-block;
+  
+  &::before {
+    content: '✗';
+    margin-right: 4px;
+    font-weight: bold;
+  }
+}
+
+.ahead-behind-badge {
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 6px;
+  display: inline-block;
+  font-size: 0.9rem;
+  
+  &.ahead {
+    color: #2e7d32;
+    background: linear-gradient(135deg, rgba(46, 125, 50, 0.15) 0%, rgba(46, 125, 50, 0.08) 100%);
+    border: 1px solid rgba(46, 125, 50, 0.3);
+    
+    &::before {
+      content: '↑';
+      margin-right: 4px;
+      font-weight: bold;
+    }
+  }
+  
+  &.behind {
+    color: #d32f2f;
+    background: linear-gradient(135deg, rgba(211, 47, 47, 0.15) 0%, rgba(211, 47, 47, 0.08) 100%);
+    border: 1px solid rgba(211, 47, 47, 0.3);
+    
+    &::before {
+      content: '↓';
+      margin-right: 4px;
+      font-weight: bold;
+    }
+  }
+}
+
+.weekend-text {
+  color: var(--mat-sys-outline);
+  font-style: italic;
+}
+
+.absent-text {
+  color: #d32f2f;
+  font-weight: 500;
+  padding: 4px 8px;
+  background: rgba(211, 47, 47, 0.1);
+  border-radius: 6px;
+  display: inline-block;
+}
+
+// Enhanced table row styling
+::ng-deep {
+  .mat-mdc-table {
+    .mat-mdc-row {
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: linear-gradient(90deg, rgba(25, 118, 210, 0.06) 0%, rgba(25, 118, 210, 0.02) 100%);
+        transform: scale(1.01);
+      }
+    }
+    
+    .mat-mdc-cell {
+      padding: 16px !important;
+    }
+    
+    .mat-mdc-header-cell {
+      padding: 16px !important;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 960px) {
+  .report-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .month-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .month-picker {
+    flex: 1;
+    min-width: 150px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-container {
+    gap: 20px;
+  }
+  
+  .month-controls {
+    gap: 6px;
+  }
+  
+  .month-picker {
+    width: 140px;
+    min-width: 120px;
+  }
+  
+  .title-with-icon {
+    span {
+      font-size: 1.1rem;
+    }
+  }
 }
 
 

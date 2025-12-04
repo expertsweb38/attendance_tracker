@@ -1,0 +1,42 @@
+.monthly-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-header {
+  margin-bottom: 8px;
+  
+  .page-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: #1e3a5f;
+    
+    mat-icon {
+      font-size: 36px;
+      width: 36px;
+      height: 36px;
+    }
+  }
+  
+  .page-subtitle {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 16px;
+    margin: 0;
+  }
+}
+
+:host-context(.dark-theme) {
+  .page-title {
+    color: #e0e0e0;
+  }
+  
+  .page-subtitle {
+    color: rgba(255, 255, 255, 0.7);
+  }
+}
+

@@ -1,0 +1,120 @@
+<div class="settings-container">
+  <div class="page-header">
+    <h1 class="page-title">
+      <mat-icon>settings</mat-icon>
+      Settings
+    </h1>
+    <p class="page-subtitle">Manage your preferences and data</p>
+  </div>
+
+  <div class="settings-grid">
+    <!-- Appearance Settings -->
+    <mat-card class="settings-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>palette</mat-icon>
+          Appearance
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-label">Dark Mode</div>
+            <div class="setting-description">Switch between light and dark theme</div>
+          </div>
+          <mat-slide-toggle 
+            [checked]="isDarkMode()" 
+            (change)="toggleDarkMode()">
+          </mat-slide-toggle>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Attendance Settings -->
+    <mat-card class="settings-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>schedule</mat-icon>
+          Attendance Settings
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-label">Daily Hours Limit</div>
+            <div class="setting-description">Set your daily work hours requirement (e.g., 7, 8, 9 hours)</div>
+          </div>
+          <button mat-raised-button color="primary" (click)="openDailyHoursDialog()">
+            <mat-icon>edit</mat-icon>
+            <span>Set to {{ getDailyHoursLimit() }}h</span>
+          </button>
+        </div>
+        <div class="setting-info">
+          <p class="info-text">
+            <mat-icon>info</mat-icon>
+            This value is used to calculate ahead/behind hours and monthly targets. Changes apply immediately to all calculations.
+          </p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Data Management -->
+    <mat-card class="settings-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>storage</mat-icon>
+          Data Management
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="setting-actions">
+          <button mat-raised-button color="primary" (click)="exportData()">
+            <mat-icon>download</mat-icon>
+            <span>Export to CSV</span>
+          </button>
+          <button mat-stroked-button color="warn" (click)="resetData()">
+            <mat-icon>delete</mat-icon>
+            <span>Reset All Data</span>
+          </button>
+        </div>
+        <div class="setting-info">
+          <p class="info-text">
+            <mat-icon>info</mat-icon>
+            Your data is stored locally in your browser. Export your data regularly to avoid data loss.
+          </p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- About -->
+    <mat-card class="settings-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>info</mat-icon>
+          About
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="about-content">
+          <div class="app-info">
+            <h3>Attendance Tracker</h3>
+            <p>Version 2.0.0</p>
+            <p class="description">A professional attendance tracking application to help you monitor your daily work hours and maintain your configured daily requirement.</p>
+          </div>
+          <div class="features">
+            <h4>Features:</h4>
+            <ul>
+              <li>Daily attendance tracking</li>
+              <li>Configurable daily hours requirement monitoring</li>
+              <li>Weekly and monthly views</li>
+              <li>Visual charts and statistics</li>
+              <li>Data export functionality</li>
+              <li>Dark mode support</li>
+            </ul>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+

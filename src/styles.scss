@@ -1,4 +1,3 @@
-
 // Include theming for Angular Material with `mat.theme()`.
 // This Sass mixin will define CSS variables that are used for styling Angular Material
 // components according to the Material 3 design spec.
@@ -32,8 +31,95 @@ body {
 
   // Reset the user agent margin.
   margin: 0;
+  
+  // Smooth transitions
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body { 
+  height: 100%; 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+body.dark-theme {
+  color-scheme: dark;
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+}
+
+/* Material Dialog overlay - standard z-index */
+.cdk-overlay-container {
+  z-index: 1000;
+}
+
+.cdk-overlay-pane {
+  z-index: 1000;
+}
+
+.cdk-overlay-backdrop {
+  z-index: 999;
+}
+
+/* Time picker overlay - MUST be above Material dialogs */
+/* Force time picker overlay to body level with highest z-index */
+body > .ngx-material-timepicker-overlay,
+.ngx-material-timepicker-overlay {
+  z-index: 10001 !important;
+  position: fixed !important;
+}
+
+body > .ngx-material-timepicker-container,
+.ngx-material-timepicker-container {
+  z-index: 10001 !important;
+  position: relative !important;
+}
+
+body > .ngx-material-timepicker-backdrop,
+.ngx-material-timepicker-backdrop {
+  z-index: 10000 !important;
+  position: fixed !important;
+}
+
+/* Ensure time picker is always clickable */
+.ngx-material-timepicker-overlay,
+.ngx-material-timepicker-overlay * {
+  pointer-events: auto !important;
+}
+
+/* Override dialog container z-index */
+.cdk-overlay-container .ngx-material-timepicker-overlay {
+  z-index: 10001 !important;
+}
+
+/* Force time picker to be on top even if inside dialog */
+.cdk-overlay-pane .ngx-material-timepicker-overlay,
+.cdk-overlay-container .ngx-material-timepicker-overlay {
+  z-index: 10001 !important;
+  position: fixed !important;
+}
+
+/* Moderate border-radius for all Material buttons and components */
+.mat-mdc-button,
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button,
+.mat-mdc-stroked-button,
+.mat-mdc-unelevated-button {
+  border-radius: 6px !important;
+}
+
+.mat-mdc-card {
+  border-radius: 12px !important;
+}
+
+.mat-mdc-form-field {
+  .mat-mdc-text-field-wrapper {
+    border-radius: 6px !important;
+  }
+}
+
+.mat-mdc-dialog-container {
+  border-radius: 12px !important;
+}

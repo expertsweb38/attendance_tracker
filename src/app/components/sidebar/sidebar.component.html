@@ -1,0 +1,29 @@
+<nav class="sidebar-nav">
+  <div class="sidebar-header">
+    <div class="logo">
+      <mat-icon class="logo-icon">access_time</mat-icon>
+      <span class="logo-text">Attendance</span>
+    </div>
+  </div>
+  
+  <mat-nav-list class="nav-list">
+    <a 
+      mat-list-item 
+      *ngFor="let item of navItems" 
+      [routerLink]="item.route"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{exact: item.route === '/dashboard'}"
+      class="nav-item">
+      <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+      <span class="nav-label">{{ item.label }}</span>
+    </a>
+  </mat-nav-list>
+  
+  <div class="sidebar-footer">
+    <div class="footer-info">
+      <mat-icon class="footer-icon">cloud_done</mat-icon>
+      <span class="footer-text">Data saved locally</span>
+    </div>
+  </div>
+</nav>
+

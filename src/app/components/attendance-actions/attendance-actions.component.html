@@ -1,19 +1,61 @@
 <mat-card>
-  <mat-card-title>Today's Status</mat-card-title>
+  <mat-card-title>
+    <span style="display: flex; align-items: center; gap: 8px;">
+      <mat-icon>today</mat-icon>
+      <span>Today's Status</span>
+    </span>
+    <div [style.color]="status().aheadBehindMs >= 0 ? '#2e7d32' : '#d32f2f'" style="margin-left: auto; width: fit-content; font-weight: 600; margin-top: 8px; padding: 8px 12px; border-radius: 6px;" [style.background]="status().aheadBehindMs >= 0 ? 'rgba(46, 125, 50, 0.1)' : 'rgba(211, 47, 47, 0.1)'">
+      <strong>{{ status().aheadBehindMs >= 0 ? 'Ahead' : 'Behind' }}:</strong> {{ status().aheadBehindFormatted }}
+      <span style="font-size: 0.85em; opacity: 0.8;"> (Target: {{ getDailyHoursLimit() }}h)</span>
+    </div>
+  </mat-card-title>
   <mat-card-content>
-    <div>
-      <div>
-        Checked In: {{ status().checkedIn ? 'Yes' : 'No' }}
+    <div class="status-container">
+      <!-- Status Badge -->
+      <div class="status-badge" [class.checked-in]="status().checkedIn" [class.checked-out]="!status().checkedIn">
+        <div class="status-icon-wrapper">
+          <mat-icon class="status-icon">{{ status().checkedIn ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+        </div>
+        <div class="status-text">
+          <span class="status-label">Status</span>
+          <span class="status-value">{{ status().checkedIn ? 'Checked In' : 'Not Checked In' }}</span>
+        </div>
       </div>
-      <div>
-        <ng-container *ngIf="status().checkedIn; else workedStatic">
-          Checked in at: {{ status().checkInTime | date:'shortTime' }}
-          • Worked: {{ formatHMS(status().workedMs) }}
-        </ng-container>
-        <ng-template #workedStatic>
-          Worked: {{ status().formatted }}
-        </ng-template>
-      </div>
+
+      <!-- Time Worked - Large Display -->
+      <ng-container *ngIf="status().checkedIn; else workedStatic">
+        <div class="time-display-card">
+          <div class="time-display-header">
+            <mat-icon class="time-icon">schedule</mat-icon>
+            <span class="time-label">Time Worked</span>
+          </div>
+          <div class="time-display-value">{{ formatHMS(status().workedMs) }}</div>
+          <div class="time-display-meta">
+            <div class="meta-item">
+              <mat-icon class="meta-icon">login</mat-icon>
+              <span class="meta-text">Check-in: {{ status().checkInTime | date:'shortTime' }}</span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      
+      <ng-template #workedStatic>
+        <div class="time-display-card">
+          <div class="time-display-header">
+            <mat-icon class="time-icon">schedule</mat-icon>
+            <span class="time-label">Total Worked</span>
+          </div>
+          <div class="time-display-value">{{ status().formatted }}</div>
+        </div>
+        <div class="ahead-behind-badge" [class.ahead]="status().aheadBehindMs >= 0" [class.behind]="status().aheadBehindMs < 0">
+          <mat-icon class="badge-icon">{{ status().aheadBehindMs >= 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+          <div class="badge-content">
+            <span class="badge-label">{{ status().aheadBehindMs >= 0 ? 'Ahead' : 'Behind' }}</span>
+            <span class="badge-value">{{ status().aheadBehindFormatted }}</span>
+            <span class="badge-target">Target: {{ getDailyHoursLimit() }}h</span>
+          </div>
+        </div>
+      </ng-template>
     </div>
   </mat-card-content>
   <mat-card-actions>

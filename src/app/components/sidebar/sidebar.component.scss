@@ -1,0 +1,333 @@
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+  color: #1e3a5f;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0,0,0,0.03)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+// Dark theme sidebar
+:host-context(.dark-theme) .sidebar-nav {
+  background: linear-gradient(180deg, #1e3a5f 0%, #2d4a6f 100%);
+  color: white;
+  border-right-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+  
+  &::before {
+    background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+  }
+}
+
+.sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 1;
+  
+}
+
+:host-context(.dark-theme) .sidebar-header {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  .logo-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: #1976d2;
+    filter: drop-shadow(0 2px 4px rgba(25, 118, 210, 0.2));
+    transition: color 0.3s ease;
+  }
+  
+  .logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #1e3a5f;
+    transition: color 0.3s ease;
+  }
+  
+}
+
+:host-context(.dark-theme) .logo {
+  .logo-icon {
+    color: #64b5f6;
+    filter: drop-shadow(0 2px 4px rgba(100, 181, 246, 0.3));
+  }
+  
+  .logo-text {
+    background: linear-gradient(135deg, #ffffff 0%, #e3f2fd 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+.nav-list {
+  flex: 1;
+  padding: 16px 0;
+  position: relative;
+  z-index: 1;
+}
+
+.nav-item {
+  margin: 8px 0px;
+  border-radius: 0px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: rgba(30, 58, 95, 0.8);
+  position: relative;
+  overflow: hidden;
+  padding: 0 !important;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: #1976d2;
+    transform: scaleY(0);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0 2px 2px 0;
+  }
+  
+  ::ng-deep {
+    .mdc-list-item {
+      padding: 0 !important;
+      min-height: 48px;
+    }
+    
+    .mdc-list-item__content {
+      padding: 12px 16px !important;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      width: 100%;
+      gap: 0;
+    }
+    
+    .mat-mdc-list-item-unscoped-content {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      width: 100%;
+      gap: 0;
+    }
+    
+    // Ensure icon and label are side by side
+    .mdc-list-item__primary-text,
+    .mdc-list-item__content > * {
+      display: inline-flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+    }
+  }
+  
+  &:hover {
+    background: rgba(25, 118, 210, 0.08);
+    color: #1e3a5f;
+    transform: translateX(4px);
+    
+    &::before {
+      transform: scaleY(1);
+    }
+  }
+  
+  &.active {
+    background: linear-gradient(135deg, rgba(25, 118, 210, 0.15) 0%, rgba(25, 118, 210, 0.08) 100%);
+    color: #1976d2;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.15);
+    
+    &::before {
+      transform: scaleY(1);
+    }
+    
+    ::ng-deep {
+      .mdc-list-item {
+        padding-left: 0 !important;
+      }
+      
+      .mdc-list-item__content {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+    }
+    
+    .nav-icon {
+      color: #1976d2;
+      transform: scale(1.1);
+    }
+    
+    .nav-label {
+      font-weight: 600;
+      color: #1976d2;
+    }
+  }
+  
+  .nav-icon {
+    margin-right: 16px;
+    transition: all 0.3s ease;
+    color: rgba(30, 58, 95, 0.7);
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    vertical-align: middle;
+  }
+  
+  .nav-label {
+    font-weight: 500;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  
+}
+
+// Dark theme nav items
+:host-context(.dark-theme) .nav-item {
+  color: rgba(255, 255, 255, 0.8);
+  
+  &::before {
+    background: #64b5f6;
+  }
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+  
+  &.active {
+    background: linear-gradient(135deg, rgba(100, 181, 246, 0.2) 0%, rgba(100, 181, 246, 0.1) 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(100, 181, 246, 0.2);
+    
+    .nav-icon {
+      color: #64b5f6;
+    }
+    
+    .nav-label {
+      color: white;
+    }
+  }
+  
+  .nav-icon {
+    color: rgba(255, 255, 255, 0.7);
+  }
+}
+
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 1;
+  
+}
+
+:host-context(.dark-theme) .sidebar-footer {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.footer-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(30, 58, 95, 0.7);
+  font-size: 13px;
+  transition: color 0.3s ease;
+  
+  .footer-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #4caf50;
+    transition: color 0.3s ease;
+  }
+  
+  .footer-text {
+    font-weight: 400;
+  }
+  
+}
+
+:host-context(.dark-theme) .footer-info {
+  color: rgba(255, 255, 255, 0.7);
+  
+  .footer-icon {
+    color: #81c784;
+  }
+}
+
+::ng-deep {
+  .mat-mdc-list-item {
+    --mdc-list-list-item-label-text-color: inherit;
+  }
+  
+  .mat-mdc-list-item.mdc-list-item--selected {
+    background-color: transparent !important;
+  }
+  
+  // Force horizontal layout for nav items
+  .nav-list .mat-mdc-list-item {
+    padding: 0 !important;
+    padding-left: 0 !important;
+    
+    .mdc-list-item__content {
+      flex-direction: row !important;
+      align-items: center !important;
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+    }
+    
+    .mat-mdc-list-item-unscoped-content {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      width: 100%;
+    }
+    
+    // Ensure all children are inline
+    .mdc-list-item__primary-text {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+    }
+  }
+  
+  // Remove any left padding/margin for active items
+  .nav-list .nav-item.active .mat-mdc-list-item {
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+    
+    .mdc-list-item__content {
+      padding-left: 16px !important;
+    }
+  }
+}
+

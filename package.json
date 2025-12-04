@@ -31,6 +31,12 @@
     "@angular/material": "^20.2.11",
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
+    "chart.js": "^4.5.1",
+    "date-fns": "^4.1.0",
+    "jspdf": "^3.0.4",
+    "jspdf-autotable": "^5.0.2",
+    "ng2-charts": "^8.0.0",
+    "ngx-material-timepicker": "^13.1.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

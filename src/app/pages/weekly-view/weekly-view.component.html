@@ -1,0 +1,106 @@
+<div class="weekly-container">
+  <div class="page-header">
+    <h1 class="page-title">
+      <mat-icon>view_week</mat-icon>
+      Weekly View
+    </h1>
+    <p class="page-subtitle">Track your attendance for the current week</p>
+  </div>
+
+  <!-- Week Navigation -->
+  <mat-card class="week-nav-card">
+    <mat-card-content>
+      <div class="week-nav">
+        <button mat-icon-button (click)="previousWeek()" title="Previous Week">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <div class="week-label">{{ getWeekLabel() }}</div>
+        <button mat-icon-button (click)="nextWeek()" title="Next Week">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+        <button mat-stroked-button (click)="goToCurrentWeek()" class="today-btn">
+          <mat-icon>today</mat-icon>
+          <span>This Week</span>
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Week Summary -->
+  <div class="summary-cards">
+    <mat-card class="summary-card">
+      <div class="summary-content">
+        <mat-icon>schedule</mat-icon>
+        <div class="summary-info">
+          <div class="summary-label">Total Hours</div>
+          <div class="summary-value">{{ format(weekSummary().totalMs) }}</div>
+        </div>
+      </div>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <div class="summary-content">
+        <mat-icon>event_available</mat-icon>
+        <div class="summary-info">
+          <div class="summary-label">Present Days</div>
+          <div class="summary-value">{{ weekSummary().presentDays }}/{{ weekSummary().totalDays }}</div>
+        </div>
+      </div>
+    </mat-card>
+
+    <mat-card class="summary-card" [class.ahead]="weekSummary().aheadBehindMs >= 0" [class.behind]="weekSummary().aheadBehindMs < 0">
+      <div class="summary-content">
+        <mat-icon>{{ weekSummary().aheadBehindMs >= 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+        <div class="summary-info">
+          <div class="summary-label">{{ weekSummary().aheadBehindMs >= 0 ? 'Ahead' : 'Behind' }}</div>
+          <div class="summary-value">{{ format(abs(weekSummary().aheadBehindMs)) }}</div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- Week Table -->
+  <mat-card class="week-table-card">
+    <mat-card-content>
+      <table mat-table [dataSource]="weekData()" class="week-table">
+        <ng-container matColumnDef="day">
+          <th mat-header-cell *matHeaderCellDef>Day</th>
+          <td mat-cell *matCellDef="let day">{{ day.dayName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Date</th>
+          <td mat-cell *matCellDef="let day">{{ day.dateKey }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let day">
+            <span class="status-badge" [class.present]="day.present" [class.absent]="!day.present">
+              {{ day.present ? 'Present' : 'Absent' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="hours">
+          <th mat-header-cell *matHeaderCellDef>Hours</th>
+          <td mat-cell *matCellDef="let day">{{ format(day.totalMs) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="aheadBehind">
+          <th mat-header-cell *matHeaderCellDef>Ahead/Behind</th>
+          <td mat-cell *matCellDef="let day">
+            <span *ngIf="day.present" class="ahead-behind-badge" [class.ahead]="day.aheadBehindMs >= 0" [class.behind]="day.aheadBehindMs < 0">
+              {{ day.aheadBehindMs >= 0 ? 'Ahead' : 'Behind' }}: {{ format(abs(day.aheadBehindMs)) }}
+            </span>
+            <span *ngIf="!day.present" class="absent-text">Behind: 09:00</span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['day', 'date', 'status', 'hours', 'aheadBehind']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['day', 'date', 'status', 'hours', 'aheadBehind']"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+</div>
+
