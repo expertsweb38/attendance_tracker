@@ -59,11 +59,11 @@
     </div>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-raised-button color="primary" (click)="checkIn()">
+    <button mat-raised-button color="primary" (click)="checkIn()" [disabled]="status().checkedIn">
       <mat-icon>login</mat-icon>
       Check In
     </button>
-    <button mat-raised-button color="accent" (click)="checkOut()">
+    <button mat-raised-button color="accent" (click)="checkOut()" [disabled]="!status().checkedIn">
       <mat-icon>logout</mat-icon>
       Check Out
     </button>
