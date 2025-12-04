@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
-import { AttendanceRecord, PeriodSummary } from '../models/attendance.model';
-import { combineDateKeyAndTime, diffMs, endOfMonth, formatDuration, msToHours, parseDateKey, startOfMonth, toDateKey, within } from '../utils/date-utils';
+import { AttendanceRecord, MonthlyAbsentSummary, PeriodSummary } from '../models/attendance.model';
+import { combineDateKeyAndTime, diffMs, endOfMonth, endOfYear, formatDuration, msToHours, parseDateKey, startOfMonth, startOfYear, toDateKey, within } from '../utils/date-utils';
 
 const STORAGE_KEY = 'attendance_records_v1';
 const DAILY_HOURS_KEY = 'daily_hours_limit';
@@ -84,6 +84,27 @@ export class AttendanceService {
     const DAILY_TARGET_MS = this.getDailyTargetMs();
     
     if (!rec) {
+      // Check if today is a working day
+      const dayOfWeek = now.getDay();
+      const isWorkingDay = dayOfWeek >= 1 && dayOfWeek <= 5;
+      
+      // If it's a working day and past 6 PM, consider it absent (not just not checked in)
+      // Otherwise, if it's a working day, show as behind (not checked in yet)
+      const hours = now.getHours();
+      const isLikelyAbsent = isWorkingDay && hours >= 18; // After 6 PM, likely absent
+      
+      if (isLikelyAbsent || !isWorkingDay) {
+        // Absent day or weekend - don't show as behind
+        return { 
+          checkedIn: false, 
+          workedMs: 0, 
+          formatted: '00:00',
+          aheadBehindMs: 0,
+          aheadBehindFormatted: '00:00'
+        };
+      }
+      
+      // Working day, not checked in yet - show as behind
       return { 
         checkedIn: false, 
         workedMs: 0, 
@@ -122,11 +143,17 @@ export class AttendanceService {
   /**
    * Calculate ahead/behind hours for a specific date
    * @param dateKey YYYY-MM-DD format
-   * @returns ahead/behind in milliseconds (positive = ahead, negative = behind)
+   * @returns ahead/behind in milliseconds (positive = ahead, negative = behind). Returns 0 for absent days.
    */
   getDailyAheadBehind(dateKey: string): number {
-    const DAILY_TARGET_MS = this.getDailyTargetMs();
     const rec = this.findByDate(dateKey);
+    
+    // If no record exists, it's an absent day - return 0 (not behind)
+    if (!rec) {
+      return 0;
+    }
+    
+    const DAILY_TARGET_MS = this.getDailyTargetMs();
     const workedMs = rec?.totalMs ?? 0;
     return workedMs - DAILY_TARGET_MS;
   }
@@ -135,9 +162,116 @@ export class AttendanceService {
     return [...this.recordsSignal()].sort((a, b) => a.date.localeCompare(b.date));
   }
 
+  /**
+   * Calculate absent days for a specific year
+   */
+  getYearlyAbsents(year: number, now = new Date()): number {
+    const yearStart = startOfYear(new Date(year, 0, 1));
+    const yearEnd = endOfYear(new Date(year, 11, 31));
+    const yearStartKey = toDateKey(yearStart);
+    const yearEndKey = toDateKey(yearEnd);
+    const todayKey = toDateKey(now);
+    
+    // Only count up to today if we're in the current year
+    const endKey = year === now.getFullYear() ? todayKey : yearEndKey;
+    
+    const list = this.getDailyList();
+    const presentDates = new Set(list.filter(r => within(r.date, yearStartKey, endKey)).map(r => r.date));
+    
+    // Count working days in the year (up to today if current year)
+    let workingDaysInYear = 0;
+    const checkDate = new Date(yearStart);
+    const endDate = year === now.getFullYear() ? now : yearEnd;
+    
+    while (checkDate <= endDate && toDateKey(checkDate) <= endKey) {
+      const dayOfWeek = checkDate.getDay();
+      if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+        workingDaysInYear++;
+      }
+      checkDate.setDate(checkDate.getDate() + 1);
+    }
+    
+    // Count present working days
+    let presentWorkingDays = 0;
+    const presentCheckDate = new Date(yearStart);
+    while (presentCheckDate <= endDate && toDateKey(presentCheckDate) <= endKey) {
+      const dayOfWeek = presentCheckDate.getDay();
+      const dateKey = toDateKey(presentCheckDate);
+      if (dayOfWeek >= 1 && dayOfWeek <= 5 && presentDates.has(dateKey)) {
+        presentWorkingDays++;
+      }
+      presentCheckDate.setDate(presentCheckDate.getDate() + 1);
+    }
+    
+    return Math.max(0, workingDaysInYear - presentWorkingDays);
+  }
+
+  /**
+   * Get monthly absent breakdown for the current year
+   */
+  getMonthlyAbsentsBreakdown(now = new Date()): MonthlyAbsentSummary[] {
+    const currentYear = now.getFullYear();
+    const months: MonthlyAbsentSummary[] = [];
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                       'July', 'August', 'September', 'October', 'November', 'December'];
+    
+    const list = this.getDailyList();
+    const todayKey = toDateKey(now);
+    
+    for (let month = 0; month < 12; month++) {
+      const monthStart = startOfMonth(new Date(currentYear, month, 1));
+      const monthEnd = endOfMonth(new Date(currentYear, month, 1));
+      const monthStartKey = toDateKey(monthStart);
+      const monthEndKey = toDateKey(monthEnd);
+      
+      // Only count up to today if we're in the current month
+      const endKey = month === now.getMonth() && currentYear === now.getFullYear() ? todayKey : monthEndKey;
+      const endDate = month === now.getMonth() && currentYear === now.getFullYear() ? now : monthEnd;
+      
+      const presentDates = new Set(list.filter(r => within(r.date, monthStartKey, endKey)).map(r => r.date));
+      
+      // Count working days in the month
+      let workingDays = 0;
+      const checkDate = new Date(monthStart);
+      while (checkDate <= endDate && toDateKey(checkDate) <= endKey) {
+        const dayOfWeek = checkDate.getDay();
+        if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+          workingDays++;
+        }
+        checkDate.setDate(checkDate.getDate() + 1);
+      }
+      
+      // Count present working days
+      let presentWorkingDays = 0;
+      const presentCheckDate = new Date(monthStart);
+      while (presentCheckDate <= endDate && toDateKey(presentCheckDate) <= endKey) {
+        const dayOfWeek = presentCheckDate.getDay();
+        const dateKey = toDateKey(presentCheckDate);
+        if (dayOfWeek >= 1 && dayOfWeek <= 5 && presentDates.has(dateKey)) {
+          presentWorkingDays++;
+        }
+        presentCheckDate.setDate(presentCheckDate.getDate() + 1);
+      }
+      
+      const absentDays = Math.max(0, workingDays - presentWorkingDays);
+      
+      months.push({
+        month,
+        monthName: monthNames[month],
+        year: currentYear,
+        absentDays,
+        workingDays
+      });
+    }
+    
+    return months;
+  }
+
   getSummary(now = new Date()): {
     totalPresentDays: number;
     totalAbsentDaysMonth: number;
+    totalAbsentDaysYear: number;
+    monthlyAbsents: MonthlyAbsentSummary[];
     averageDailyHours: number;
     month: PeriodSummary;
     cumulativeAheadBehindMs: number; // Cumulative ahead/behind based on working days elapsed
@@ -182,6 +316,9 @@ export class AttendanceService {
     let monthMs = 0;
     const monthRecords = list.filter(r => within(r.date, monthStartKey, todayKey));
     
+    // Track which dates have records (present days)
+    const presentDates = new Set(monthRecords.map(r => r.date));
+    
     for (const r of monthRecords) {
       if (r.totalMs !== undefined && r.totalMs > 0) {
         // Completed day
@@ -192,11 +329,24 @@ export class AttendanceService {
       }
     }
     
-    // Cumulative target based on working days elapsed (not full month)
-    const dailyTargetMs = this.getDailyTargetMs();
-    const cumulativeTargetMs = workingDaysElapsed * dailyTargetMs;
+    // Count only present working days (excluding absent days and weekends)
+    let presentWorkingDays = 0;
+    const checkDate = new Date(monthStart);
+    while (checkDate <= now && toDateKey(checkDate) <= todayKey) {
+      const dayOfWeek = checkDate.getDay();
+      const dateKey = toDateKey(checkDate);
+      // Count only working days (Mon-Fri) where person was present
+      if (dayOfWeek >= 1 && dayOfWeek <= 5 && presentDates.has(dateKey)) {
+        presentWorkingDays++;
+      }
+      checkDate.setDate(checkDate.getDate() + 1);
+    }
     
-    // Cumulative ahead/behind based on working days elapsed
+    // Cumulative target based on present working days only (not all working days)
+    const dailyTargetMs = this.getDailyTargetMs();
+    const cumulativeTargetMs = presentWorkingDays * dailyTargetMs;
+    
+    // Cumulative ahead/behind based on present working days only
     const cumulativeAheadBehindMs = monthMs - cumulativeTargetMs;
     
     // Full month target (for display purposes)
@@ -212,18 +362,32 @@ export class AttendanceService {
     const sumMs = list.reduce((acc, r) => acc + (r.totalMs ?? 0), 0);
     const averageDailyHours = uniqueDates.size ? msToHours(sumMs / uniqueDates.size) : 0;
 
+    // Calculate month target based on present working days only (up to today)
+    // For full month display, we still use all working days, but for ahead/behind calculation, use present days
+    const monthTargetBasedOnPresentDays = presentWorkingDays * dailyTargetMs;
+    const monthAheadBehindMs = monthMs - monthTargetBasedOnPresentDays;
+
     const monthSummary: PeriodSummary = {
       period: 'month',
       startDate: monthStartKey,
       endDate: monthEndKey,
       totalMs: monthMs,
-      targetMs: monthTargetMs,
-      aheadBehindMs: monthMs - monthTargetMs, // Keep for backward compatibility
+      targetMs: monthTargetMs, // Keep full month target for display
+      aheadBehindMs: monthAheadBehindMs, // Calculate based on present working days only
     };
+
+    // Calculate yearly absents
+    const currentYear = now.getFullYear();
+    const totalAbsentDaysYear = this.getYearlyAbsents(currentYear, now);
+    
+    // Get monthly absents breakdown
+    const monthlyAbsents = this.getMonthlyAbsentsBreakdown(now);
 
     return { 
       totalPresentDays, 
       totalAbsentDaysMonth, 
+      totalAbsentDaysYear,
+      monthlyAbsents,
       averageDailyHours, 
       month: monthSummary,
       cumulativeAheadBehindMs,

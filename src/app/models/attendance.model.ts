@@ -18,4 +18,12 @@ export interface PeriodSummary {
   aheadBehindMs: number; // totalMs - targetMs
 }
 
+export interface MonthlyAbsentSummary {
+  month: number; // 0-11 (0 = January)
+  monthName: string; // e.g., "January"
+  year: number;
+  absentDays: number;
+  workingDays: number;
+}
+
 

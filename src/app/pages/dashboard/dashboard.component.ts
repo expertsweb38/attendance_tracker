@@ -8,6 +8,7 @@ import { formatDuration, msToHours, startOfMonth, endOfMonth } from '../../utils
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType, Chart, registerables } from 'chart.js';
 import { AttendanceActionsComponent } from '../../components/attendance-actions/attendance-actions.component';
+import { AttendanceSummaryComponent } from '../../components/attendance-summary/attendance-summary.component';
 
 // Register all Chart.js components
 Chart.register(...registerables);
@@ -21,7 +22,8 @@ Chart.register(...registerables);
     MatIconModule,
     MatButtonModule,
     BaseChartDirective,
-    AttendanceActionsComponent
+    AttendanceActionsComponent,
+    AttendanceSummaryComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'

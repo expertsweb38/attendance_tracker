@@ -102,7 +102,7 @@
               {{ getAheadBehindLabel(row.aheadBehindMs) }}: {{ format(abs(row.aheadBehindMs)) }}
             </span>
             <span *ngIf="row.weekend" class="weekend-text">-</span>
-            <span *ngIf="!row.weekend && !row.present" class="absent-text">Behind: {{ format(9 * 60 * 60 * 1000) }}</span>
+            <span *ngIf="!row.weekend && !row.present" class="absent-text">-</span>
           </td>
         </ng-container>
         <ng-container matColumnDef="actions">

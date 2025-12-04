@@ -93,7 +93,7 @@
             <span *ngIf="day.present" class="ahead-behind-badge" [class.ahead]="day.aheadBehindMs >= 0" [class.behind]="day.aheadBehindMs < 0">
               {{ day.aheadBehindMs >= 0 ? 'Ahead' : 'Behind' }}: {{ format(abs(day.aheadBehindMs)) }}
             </span>
-            <span *ngIf="!day.present" class="absent-text">Behind: 09:00</span>
+            <span *ngIf="!day.present" class="absent-text">-</span>
           </td>
         </ng-container>
 

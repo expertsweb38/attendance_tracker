@@ -1,3 +1,22 @@
+<!-- Yearly Absents Card - Prominent Display -->
+<mat-card class="yearly-absent-card">
+  <mat-card-header>
+    <mat-card-title>
+      <span class="title-with-icon">
+        <mat-icon>event_busy</mat-icon>
+        <span>Total Absents This Year</span>
+      </span>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="yearly-absent-display">
+      <div class="yearly-value">{{ summary().totalAbsentDaysYear }}</div>
+      <div class="yearly-label">Absent Days in {{ getCurrentYear() }}</div>
+      <div class="yearly-subtext">Across all working days this year</div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
 <mat-card class="summary-card">
   <mat-card-header>
     <mat-card-title>
@@ -47,6 +66,73 @@
           <div class="stat-row highlight" [class.good]="summary().month.aheadBehindMs >= 0" [class.bad]="summary().month.aheadBehindMs < 0">
             <span class="stat-label">{{ sign(summary().month.aheadBehindMs) }}:</span>
             <span class="stat-value">{{ format(abs(summary().month.aheadBehindMs)) }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-header">
+          <mat-icon>calendar_month</mat-icon>
+          <div class="block-title">This Year</div>
+        </div>
+        <div class="block-content">
+          <div class="stat-row">
+            <span class="stat-label">Total Absent Days:</span>
+            <span class="stat-value absent-value">{{ summary().totalAbsentDaysYear }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="monthly-absents-section">
+      <div class="section-header">
+        <mat-icon>view_list</mat-icon>
+        <div class="section-title">Monthly Absents Breakdown - {{ getCurrentYear() }}</div>
+        <div class="section-subtitle">Detailed view of absents for each month</div>
+      </div>
+      <div class="monthly-list">
+        <div *ngFor="let month of summary().monthlyAbsents" class="month-item" [class.current-month]="month.month === getCurrentMonth()" [class.past-month]="month.month < getCurrentMonth()" [class.future-month]="month.month > getCurrentMonth()">
+          <div class="month-header">
+            <div class="month-name">{{ month.monthName }}</div>
+            <span *ngIf="month.month === getCurrentMonth()" class="current-badge">Current</span>
+            <span *ngIf="month.month < getCurrentMonth()" class="past-badge">Past</span>
+            <span *ngIf="month.month > getCurrentMonth()" class="future-badge">Upcoming</span>
+          </div>
+          <div class="month-details">
+            <div class="detail-row">
+              <div class="detail-label">
+                <mat-icon>event_busy</mat-icon>
+                <span>Absent Days</span>
+              </div>
+              <div class="detail-value absent-value">{{ month.absentDays }}</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">
+                <mat-icon>work</mat-icon>
+                <span>Working Days</span>
+              </div>
+              <div class="detail-value">{{ month.workingDays }}</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">
+                <mat-icon>check_circle</mat-icon>
+                <span>Present Days</span>
+              </div>
+              <div class="detail-value present-value">{{ month.workingDays - month.absentDays }}</div>
+            </div>
+            <div class="detail-row highlight-row" *ngIf="month.absentDays > 0 && month.workingDays > 0">
+              <div class="detail-label">
+                <mat-icon>percent</mat-icon>
+                <span>Absence Rate</span>
+              </div>
+              <div class="detail-value rate-value">{{ (month.absentDays / month.workingDays * 100) | number:'1.1-1' }}%</div>
+            </div>
+            <div class="detail-row highlight-row" *ngIf="month.workingDays === 0">
+              <div class="detail-label">
+                <mat-icon>info</mat-icon>
+                <span>Status</span>
+              </div>
+              <div class="detail-value">No data yet</div>
+            </div>
           </div>
         </div>
       </div>
