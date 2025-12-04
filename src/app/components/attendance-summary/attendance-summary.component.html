@@ -18,74 +18,9 @@
 </mat-card>
 
 <mat-card class="summary-card">
-  <mat-card-header>
-    <mat-card-title>
-      <span class="title-with-icon">
-        <mat-icon>assessment</mat-icon>
-        <span>Monthly Summary</span>
-      </span>
-    </mat-card-title>
-  </mat-card-header>
   <mat-card-content>
-    <div class="grid">
-      <div class="item item-present">
-        <div class="item-icon">📅</div>
-        <div class="label">Total Present Days</div>
-        <div class="value">{{ summary().totalPresentDays }}</div>
-        <div class="subtext">days this month</div>
-      </div>
-      <div class="item item-absent">
-        <div class="item-icon">⏸️</div>
-        <div class="label">Total Absent Days</div>
-        <div class="value">{{ summary().totalAbsentDaysMonth }}</div>
-        <div class="subtext">days this month</div>
-      </div>
-      <div class="item item-average">
-        <div class="item-icon">⏱️</div>
-        <div class="label">Average Daily</div>
-        <div class="value">{{ (summary().averageDailyHours | number:'1.0-2') }} <span class="unit">h</span></div>
-        <div class="subtext">per day</div>
-      </div>
-    </div>
-
-    <div class="subgrid">
-      <div class="block">
-        <div class="block-header">
-          <mat-icon>calendar_today</mat-icon>
-          <div class="block-title">This Month</div>
-        </div>
-        <div class="block-content">
-          <div class="stat-row">
-            <span class="stat-label">Worked:</span>
-            <span class="stat-value worked">{{ format(summary().month.totalMs) }}</span>
-          </div>
-          <div class="stat-row">
-            <span class="stat-label">Target:</span>
-            <span class="stat-value target">{{ format(summary().month.targetMs) }}</span>
-          </div>
-          <div class="stat-row highlight" [class.good]="summary().month.aheadBehindMs >= 0" [class.bad]="summary().month.aheadBehindMs < 0">
-            <span class="stat-label">{{ sign(summary().month.aheadBehindMs) }}:</span>
-            <span class="stat-value">{{ format(abs(summary().month.aheadBehindMs)) }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="block">
-        <div class="block-header">
-          <mat-icon>calendar_month</mat-icon>
-          <div class="block-title">This Year</div>
-        </div>
-        <div class="block-content">
-          <div class="stat-row">
-            <span class="stat-label">Total Absent Days:</span>
-            <span class="stat-value absent-value">{{ summary().totalAbsentDaysYear }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="monthly-absents-section">
       <div class="section-header">
-        <mat-icon>view_list</mat-icon>
         <div class="section-title">Monthly Absents Breakdown - {{ getCurrentYear() }}</div>
         <div class="section-subtitle">Detailed view of absents for each month</div>
       </div>

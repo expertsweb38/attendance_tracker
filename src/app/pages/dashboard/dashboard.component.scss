@@ -291,6 +291,30 @@
   color: #c62828 !important;
 }
 
+.remaining-positive {
+  color: #1976d2 !important;
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.remaining-zero {
+  color: #2e7d32 !important;
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.avg-hours-positive {
+  color: #1976d2 !important;
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+
+.avg-hours-zero {
+  color: #2e7d32 !important;
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+
 .summary-label {
   font-size: 14px;
   color: rgba(0, 0, 0, 0.6);
@@ -298,6 +322,13 @@
   font-weight: 500;
   display: flex;
   align-items: center;
+  gap: 6px;
+  
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
   justify-content: center;
   gap: 6px;
   

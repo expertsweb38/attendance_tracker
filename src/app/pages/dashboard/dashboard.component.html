@@ -151,9 +151,37 @@
             <div class="summary-value">{{ format(summary().month.targetMs) }}</div>
           </div>
           <div class="summary-item">
-            <div class="summary-label">Projected Status</div>
-            <div class="summary-value" [class.projected-ahead]="summary().month.aheadBehindMs >= 0" [class.projected-behind]="summary().month.aheadBehindMs < 0">
-              {{ sign(summary().month.aheadBehindMs) }}: {{ format(abs(summary().month.aheadBehindMs)) }}
+            <div class="summary-label">Worked So Far</div>
+            <div class="summary-value">{{ format(summary().month.totalMs) }}</div>
+          </div>
+          <div class="summary-item highlight">
+            <div class="summary-label">
+              <mat-icon>hourglass_empty</mat-icon>
+              Remaining Hours Needed
+            </div>
+            <div class="summary-value" [class.remaining-positive]="getRemainingHours() > 0" [class.remaining-zero]="getRemainingHours() === 0">
+              {{ format(getRemainingHours()) }}
+            </div>
+            <div class="summary-hint" *ngIf="getRemainingHours() > 0">
+              {{ getRemainingDays() }} working day{{ getRemainingDays() !== 1 ? 's' : '' }} remaining
+            </div>
+            <div class="summary-hint" *ngIf="getRemainingHours() <= 0">
+              Target achieved! 🎉
+            </div>
+          </div>
+          <div class="summary-item highlight">
+            <div class="summary-label">
+              <mat-icon>schedule</mat-icon>
+              Average Daily Hours Needed
+            </div>
+            <div class="summary-value" [class.avg-hours-positive]="getAverageDailyHoursNeeded() > 0" [class.avg-hours-zero]="getAverageDailyHoursNeeded() === 0">
+              {{ formatAverageDailyHours() }}
+            </div>
+            <div class="summary-hint" *ngIf="getAverageDailyHoursNeeded() > 0">
+              Per day for remaining {{ getRemainingDays() }} working day{{ getRemainingDays() !== 1 ? 's' : '' }}
+            </div>
+            <div class="summary-hint" *ngIf="getAverageDailyHoursNeeded() === 0">
+              Target already achieved! 🎉
             </div>
           </div>
         </div>

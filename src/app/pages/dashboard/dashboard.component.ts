@@ -1,5 +1,5 @@
 import { Component, computed, inject, AfterViewInit, effect } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf, DecimalPipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,6 +18,8 @@ Chart.register(...registerables);
   standalone: true,
   imports: [
     CommonModule,
+    NgIf,
+    DecimalPipe,
     MatCardModule,
     MatIconModule,
     MatButtonModule,
@@ -256,6 +258,77 @@ export class DashboardComponent implements AfterViewInit {
       workingDaysElapsed: summary.workingDaysElapsed,
       cumulativeTargetMs: summary.workingDaysElapsed * dailyTargetMs
     };
+  }
+
+  protected getRemainingHours(): number {
+    const summary = this.summary();
+    // Calculate remaining hours: full month target - hours worked so far
+    // This automatically accounts for being ahead (negative remaining would mean ahead)
+    const remaining = summary.month.targetMs - summary.month.totalMs;
+    return Math.max(0, remaining); // Don't show negative if already exceeded target
+  }
+
+  protected getRemainingDays(): number {
+    const summary = this.summary();
+    // Calculate remaining working days in the month (excluding weekends)
+    const now = new Date();
+    const monthEnd = endOfMonth(now);
+    
+    // Calculate total working days in the month
+    const monthStart = startOfMonth(now);
+    let totalWorkingDays = 0;
+    const totalDate = new Date(monthStart);
+    while (totalDate <= monthEnd) {
+      const dayOfWeek = totalDate.getDay();
+      if (dayOfWeek >= 1 && dayOfWeek <= 5) { // Monday to Friday
+        totalWorkingDays++;
+      }
+      totalDate.setDate(totalDate.getDate() + 1);
+    }
+    
+    // Calculate working days elapsed (including today if it's a working day)
+    let workingDaysElapsed = 0;
+    const elapsedDate = new Date(monthStart);
+    while (elapsedDate <= now) {
+      const dayOfWeek = elapsedDate.getDay();
+      if (dayOfWeek >= 1 && dayOfWeek <= 5) { // Monday to Friday
+        workingDaysElapsed++;
+      }
+      elapsedDate.setDate(elapsedDate.getDate() + 1);
+    }
+    
+    // Remaining = total - elapsed
+    return Math.max(0, totalWorkingDays - workingDaysElapsed);
+  }
+
+  protected getAverageDailyHoursNeeded(): number {
+    const remainingHours = this.getRemainingHours();
+    const remainingDays = this.getRemainingDays();
+    
+    if (remainingDays === 0 || remainingHours === 0) {
+      return 0;
+    }
+    
+    // Convert milliseconds to hours and calculate average
+    const remainingHoursDecimal = remainingHours / (1000 * 60 * 60);
+    const averageHours = remainingHoursDecimal / remainingDays;
+    
+    return averageHours;
+  }
+
+  protected formatAverageDailyHours(): string {
+    const avgHours = this.getAverageDailyHoursNeeded();
+    
+    if (avgHours === 0) {
+      return '0:00h';
+    }
+    
+    // Convert to hours and minutes format (e.g., 8:55h = 8 hours 55 minutes)
+    const hours = Math.floor(avgHours);
+    const minutes = Math.round((avgHours - hours) * 60);
+    
+    // Format as hours:minutes (e.g., 8:55 for 8 hours 55 minutes)
+    return `${hours}:${minutes.toString().padStart(2, '0')}h`;
   }
 }
 

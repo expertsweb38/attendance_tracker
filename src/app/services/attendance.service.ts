@@ -367,13 +367,31 @@ export class AttendanceService {
     const monthTargetBasedOnPresentDays = presentWorkingDays * dailyTargetMs;
     const monthAheadBehindMs = monthMs - monthTargetBasedOnPresentDays;
 
+    // Calculate full month projection: project current average rate to remaining working days
+    let projectedMonthMs = monthMs; // Start with current hours worked
+    if (presentWorkingDays > 0 && workingDaysInMonth > presentWorkingDays) {
+      // Calculate average hours per present day
+      const averageMsPerPresentDay = monthMs / presentWorkingDays;
+      // Calculate remaining working days in the month
+      const remainingWorkingDays = workingDaysInMonth - presentWorkingDays;
+      // Project remaining hours based on current average rate
+      const projectedRemainingMs = averageMsPerPresentDay * remainingWorkingDays;
+      // Total projected = current + projected remaining
+      projectedMonthMs = monthMs + projectedRemainingMs;
+    } else if (presentWorkingDays === 0) {
+      // If no present days yet, projection is 0
+      projectedMonthMs = 0;
+    }
+    // Projected ahead/behind for full month (compares projected total to full month target)
+    const projectedAheadBehindMs = projectedMonthMs - monthTargetMs;
+
     const monthSummary: PeriodSummary = {
       period: 'month',
       startDate: monthStartKey,
       endDate: monthEndKey,
       totalMs: monthMs,
       targetMs: monthTargetMs, // Keep full month target for display
-      aheadBehindMs: monthAheadBehindMs, // Calculate based on present working days only
+      aheadBehindMs: projectedAheadBehindMs, // Use projected calculation for full month projection
     };
 
     // Calculate yearly absents
